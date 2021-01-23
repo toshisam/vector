@@ -148,7 +148,7 @@ fn resolve(
 
     let program = match Program::new_with_state(
         program.to_owned(),
-        &remap_functions::all(),
+        &funcs(),
         None,
         true,
         state,
@@ -166,7 +166,7 @@ fn resolve(
 struct Repl {
     highlighter: MatchingBracketHighlighter,
     validator: MatchingBracketValidator,
-    hinter: HistoryHinter,
+    history_hinter: HistoryHinter,
     colored_prompt: String,
 }
 
@@ -174,7 +174,7 @@ impl Repl {
     fn new() -> Self {
         Self {
             highlighter: MatchingBracketHighlighter::new(),
-            hinter: HistoryHinter {},
+            history_hinter: HistoryHinter {},
             colored_prompt: "$ ".to_owned(),
             validator: MatchingBracketValidator::new(),
         }
@@ -190,8 +190,37 @@ impl Hinter for Repl {
     type Hint = String;
 
     fn hint(&self, line: &str, pos: usize, ctx: &Context<'_>) -> Option<String> {
-        self.hinter.hint(line, pos, ctx)
+        let mut hints: Vec<String> = Vec::new();
+
+        // Add all function names to the hints
+        let mut func_names = funcs()
+            .iter()
+            .map(|f| f.identifier().into())
+            .collect::<Vec<String>>();
+
+        hints.append(&mut func_names);
+
+        // Add a hint, if any, from the REPL history
+        let history = self.history_hinter.hint(line, pos, ctx);
+        if let Some(hist) = history {
+            hints.push(hist);
+        }
+
+        hints
+            .iter()
+            .filter_map(|hint| {
+                if pos > 0 && hint.starts_with(&line[..pos]) {
+                    Some(String::from(str_suffix(hint, pos)))
+                } else {
+                    None
+                }
+            })
+            .next()
     }
+}
+
+fn str_suffix(s: &str, pos: usize) -> &str {
+    &s[pos..]
 }
 
 impl Highlighter for Repl {
@@ -245,13 +274,12 @@ impl Validator for Repl {
 
 fn print_function_list() {
     let table_format = *format::consts::FORMAT_NO_LINESEP_WITH_TITLE;
-    let all_funcs = remap_functions::all();
 
     let num_columns = 3;
 
     let mut func_table = Table::new();
     func_table.set_format(table_format);
-    all_funcs
+    funcs()
         .chunks(num_columns)
         .map(|funcs| {
             // Because it's possible that some chunks are only partial, e.g. have only two Some(_)
