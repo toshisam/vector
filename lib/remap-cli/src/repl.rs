@@ -168,15 +168,22 @@ struct Repl {
     validator: MatchingBracketValidator,
     history_hinter: HistoryHinter,
     colored_prompt: String,
+    hints: Vec<String>,
 }
 
 impl Repl {
     fn new() -> Self {
+        let func_names = funcs()
+            .iter()
+            .map(|f| f.identifier().into())
+            .collect::<Vec<String>>();
+
         Self {
             highlighter: MatchingBracketHighlighter::new(),
             history_hinter: HistoryHinter {},
             colored_prompt: "$ ".to_owned(),
             validator: MatchingBracketValidator::new(),
+            hints: func_names,
         }
     }
 }
@@ -190,23 +197,16 @@ impl Hinter for Repl {
     type Hint = String;
 
     fn hint(&self, line: &str, pos: usize, ctx: &Context<'_>) -> Option<String> {
-        let mut hints: Vec<String> = Vec::new();
-
-        // Add all function names to the hints
-        let mut func_names = funcs()
-            .iter()
-            .map(|f| f.identifier().into())
-            .collect::<Vec<String>>();
-
-        hints.append(&mut func_names);
-
-        // Add a hint, if any, from the REPL history
-        let history = self.history_hinter.hint(line, pos, ctx);
-        if let Some(hist) = history {
-            hints.push(hist);
+        if pos < line.len() {
+            return None;
         }
 
-        hints
+        // Check history first
+        if let Some(hist) = self.history_hinter.hint(line, pos, ctx) {
+            return Some(hist);
+        }
+
+        self.hints
             .iter()
             .filter_map(|hint| {
                 if pos > 0 && hint.starts_with(&line[..pos]) {
