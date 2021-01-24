@@ -20,9 +20,19 @@ VRL REPL commands:
   prev              Load the previous object
   exit              Terminate the program
 "#;
-
 const DOCS_URL: &str = "https://vector.dev/docs/reference/vrl";
 const FUNCTIONS_ROOT_URL: &str = "https://vector.dev/docs/reference/vrl/functions";
+const RESERVED_TERMS: &[&'static str; 9] = &[
+    "next",
+    "prev",
+    "exit",
+    "quit",
+    "help",
+    "help functions",
+    "help funcs",
+    "help fs",
+    "help docs",
+];
 
 pub(crate) fn run(mut objects: Vec<Value>) -> Result<(), Error> {
     let mut index = 0;
@@ -187,17 +197,7 @@ fn initial_hints() -> Vec<String> {
 
     hints.append(&mut func_names);
 
-    for s in &[
-        "next",
-        "prev",
-        "exit",
-        "quit",
-        "help",
-        "help functions",
-        "help funcs",
-        "help fs",
-        "help docs",
-    ] {
+    for s in RESERVED_TERMS {
         hints.push(s.to_string());
     }
 
