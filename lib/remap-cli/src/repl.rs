@@ -22,7 +22,7 @@ VRL REPL commands:
 "#;
 const DOCS_URL: &str = "https://vector.dev/docs/reference/vrl";
 const FUNCTIONS_ROOT_URL: &str = "https://vector.dev/docs/reference/vrl/functions";
-const RESERVED_TERMS: &[&'static str; 9] = &[
+const RESERVED_TERMS: &[&str; 9] = &[
     "next",
     "prev",
     "exit",
