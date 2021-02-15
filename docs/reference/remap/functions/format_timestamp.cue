@@ -27,14 +27,14 @@ remap: functions: format_timestamp: {
 		{
 			title: "Format a timestamp (ISO8601/RFC 3339)"
 			source: #"""
-				format_timestamp(now(), format: "%+")
+				format_timestamp!(now(), format: "%+")
 				"""#
 			return: "2020-10-21T16:00:00Z"
 		},
 		{
 			title: "Format a timestamp (custom)"
 			source: #"""
-				format_timestamp(now(), format: "%v %R")
+				format_timestamp!(now(), format: "%v %R")
 				"""#
 			return: "10-Oct-2020 16:00"
 		},

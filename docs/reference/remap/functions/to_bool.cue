@@ -33,35 +33,35 @@ remap: functions: to_bool: {
 		{
 			title: "Coerce to a boolean (string)"
 			source: """
-				to_bool("yes")
+				to_bool!("yes")
 				"""
 			return: true
 		},
 		{
 			title: "Coerce to a boolean (float)"
 			source: """
-				to_bool(0.0)
+				to_bool!(0.0)
 				"""
 			return: false
 		},
 		{
 			title: "Coerce to a boolean (int)"
 			source: """
-				to_bool(0)
+				to_bool!(0)
 				"""
 			return: false
 		},
 		{
 			title: "Coerce to a boolean (null)"
 			source: """
-				to_bool(null)
+				to_bool!(null)
 				"""
 			return: false
 		},
 		{
 			title: "Coerce to a boolean (boolean)"
 			source: """
-				to_bool(true)
+				to_bool!(true)
 				"""
 			return: true
 		},

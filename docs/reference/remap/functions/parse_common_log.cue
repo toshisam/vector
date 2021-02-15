@@ -37,7 +37,7 @@ remap: functions: parse_common_log: {
 		{
 			title: "Parse via Common Log Format (with default timestamp format)"
 			source: #"""
-				parse_common_log("127.0.0.1 bob frank [10/Oct/2000:13:55:36 -0700] \"GET /apache_pb.gif HTTP/1.0\" 200 2326")
+				parse_common_log!("127.0.0.1 bob frank [10/Oct/2000:13:55:36 -0700] \"GET /apache_pb.gif HTTP/1.0\" 200 2326")
 				"""#
 			return: {
 				host:      "127.0.0.1"

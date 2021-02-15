@@ -34,7 +34,7 @@ remap: functions: parse_tokens: {
 		{
 			title: "Parse tokens"
 			source: #"""
-				parse_tokens(
+				parse_tokens!(
 					"A sentence \"with \\"a\\" sentence inside\" and [some brackets]"
 				)
 				"""#
